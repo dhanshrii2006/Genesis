@@ -1,51 +1,36 @@
+/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind base;
+/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind components;
+/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind utilities;
 
-/* Global Styles */
-
+/* Google Cloud Console Design System */
 :root {
-  /* Colors - Professional palette */
-  --color-primary: #1976d2;      /* Blue */
-  --color-success: #2e7d32;      /* Green */
-  --color-warning: #ed6c02;      /* Amber */
-  --color-error: #d32f2f;        /* Red */
+  /* Primary Colors */
+  --color-primary: #1164e8;
+  --color-primary-hover: #0d47a1;
   
-  /* Neutral colors */
-  --color-text-primary: #212121;
-  --color-text-secondary: #666666;
-  --color-text-light: #999999;
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #fafafa;
-  --color-border: #e0e0e0;
+  /* Status Colors */
+  --color-success: #188038;
+  --color-warning: #f29900;
+  --color-error: #d93025;
   
-  /* Spacing */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 12px;
-  --space-lg: 16px;
-  --space-xl: 20px;
-  --space-2xl: 24px;
-  --space-3xl: 32px;
+  /* Google Colors */
+  --color-google-dark: #202124;
+  --color-google-gray: #5f6368;
+  --color-google-border: #e0e0e0;
   
-  /* Typography */
-  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
-                 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
-                 'Helvetica Neue', sans-serif;
-  --font-size-sm: 13px;
-  --font-size-base: 14px;
-  --font-size-md: 16px;
-  --font-size-lg: 18px;
-  --font-size-xl: 20px;
-  --font-size-2xl: 24px;
-  --font-size-3xl: 32px;
+  /* Backgrounds */
+  --color-bg-light: #f8f9fa;
+  --color-bg-white: #ffffff;
   
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* Typography System */
+  --font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Oxygen',
+                 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', sans-serif;
 }
 
+/* Reset & Base Styles */
 * {
   margin: 0;
   padding: 0;
@@ -54,12 +39,13 @@
 
 html {
   font-size: 16px;
+  scroll-behavior: smooth;
 }
 
 body {
   font-family: var(--font-family);
-  color: var(--color-text-primary);
-  background-color: var(--color-bg-secondary);
+  color: var(--color-google-dark);
+  background-color: var(--color-bg-light);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -69,22 +55,28 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   line-height: 1.3;
+  color: var(--color-google-dark);
 }
 
 h1 {
-  font-size: var(--font-size-3xl);
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.5px;
 }
 
 h2 {
-  font-size: var(--font-size-2xl);
+  font-size: 24px;
+  font-weight: 600;
 }
 
 h3 {
-  font-size: var(--font-size-lg);
+  font-size: 16px;
+  font-weight: 600;
 }
 
 p {
-  color: var(--color-text-primary);
+  color: var(--color-google-dark);
+  font-size: 14px;
 }
 
 /* Links */
@@ -95,7 +87,7 @@ a {
 }
 
 a:hover {
-  color: #1565c0;
+  color: var(--color-primary-hover);
   text-decoration: underline;
 }
 
@@ -105,10 +97,10 @@ button {
   cursor: pointer;
   border: none;
   border-radius: 4px;
-  padding: var(--space-md) var(--space-lg);
-  font-size: var(--font-size-base);
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
   transition: all 0.2s ease;
-  font-weight: 500;
 }
 
 button:hover {
@@ -128,58 +120,117 @@ button:disabled {
 input, textarea, select {
   font-family: var(--font-family);
   width: 100%;
-  padding: var(--space-md);
-  border: 1px solid var(--color-border);
+  padding: 8px 12px;
+  border: 1px solid var(--color-google-border);
   border-radius: 4px;
-  font-size: var(--font-size-base);
-  margin-bottom: var(--space-md);
+  font-size: 14px;
+  color: var(--color-google-dark);
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+  box-shadow: 0 0 0 3px rgba(17, 100, 232, 0.1);
 }
 
-/* Utilities */
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--space-lg);
+/* Status Indicators */
+.status-green {
+  color: var(--color-success);
 }
 
-.text-center {
-  text-align: center;
+.status-amber {
+  color: var(--color-warning);
 }
 
-.error {
-  padding: var(--space-md);
+.status-red {
+  color: var(--color-error);
+}
+
+/* Severity Dots */
+.severity-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.severity-dot.green {
+  background-color: var(--color-success);
+}
+
+.severity-dot.amber {
+  background-color: var(--color-warning);
+}
+
+.severity-dot.red {
+  background-color: var(--color-error);
+}
+
+/* Cards & Containers */
+.card {
+  background-color: var(--color-bg-white);
+  border: 1px solid var(--color-google-border);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.card-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-google-gray);
+  letter-spacing: 0.3px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+
+/* Alerts */
+.alert {
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.alert-error {
   background-color: #ffebee;
   color: var(--color-error);
-  border-radius: 4px;
-  margin-bottom: var(--space-md);
+  border: 1px solid #ef5350;
 }
 
-.success {
-  padding: var(--space-md);
+.alert-success {
   background-color: #e8f5e9;
   color: var(--color-success);
-  border-radius: 4px;
-  margin-bottom: var(--space-md);
+  border: 1px solid #66bb6a;
+}
+
+.alert-warning {
+  background-color: #fff3e0;
+  color: var(--color-warning);
+  border: 1px solid #ffa726;
 }
 
 /* Responsive */
-@media (max-width: 640px) {
-  .container {
-    padding: 0 var(--space-md);
-  }
-  
+@media (max-width: 768px) {
   h1 {
-    font-size: var(--font-size-2xl);
+    font-size: 24px;
   }
   
   h2 {
-    font-size: var(--font-size-lg);
+    font-size: 20px;
+  }
+  
+  h3 {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  h1 {
+    font-size: 20px;
+  }
+  
+  h2 {
+    font-size: 18px;
   }
 }
