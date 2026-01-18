@@ -226,8 +226,11 @@ export default function FarmerInputDashboard() {
       if (data.success) {
         // Calculate stress percentage from probabilities
         let stressPercentage = 0
-        if (data.probabilities['Moderate Stress']) {
-          stressPercentage = data.probabilities['Moderate Stress'] * 50 + data.probabilities['Severe Stress'] * 100
+        if (data.probabilities) {
+          // Stress = Moderate Stress * 0.5 + Severe Stress * 1.0
+          const moderateStress = parseFloat(data.probabilities['Moderate Stress']) || 0
+          const severeStress = parseFloat(data.probabilities['Severe Stress']) || 0
+          stressPercentage = (moderateStress * 50 + severeStress * 100) / 100
         }
 
         const newPrediction = {
@@ -236,7 +239,8 @@ export default function FarmerInputDashboard() {
           probabilities: data.probabilities,
           stressPercentage: Math.round(stressPercentage),
           timestamp: new Date().toISOString(),
-          formData: { ...formData }
+          formData: { ...formData },
+          explanation: data.explanation || null
         }
 
         setPrediction(newPrediction)
@@ -306,9 +310,9 @@ export default function FarmerInputDashboard() {
                     onChange={handleFormChange}
                     className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
-                    <option value="Summer">Summer</option>
-                    <option value="Winter">Winter</option>
-                    <option value="Monsoon">Monsoon</option>
+                    <option value="Summer">🌞 Summer</option>
+                    <option value="Winter">❄️ Winter</option>
+                    <option value="Monsoon">🌧️ Monsoon</option>
                   </select>
                 </div>
 
@@ -515,7 +519,7 @@ export default function FarmerInputDashboard() {
                   <div key={label}>
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm font-medium text-gray-700">{label}</span>
-                      <span className="text-sm font-bold text-gray-900">{(prob * 100).toFixed(1)}%</span>
+                      <span className="text-sm font-bold text-gray-900">{prob}%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-3">
                       <div
@@ -524,13 +528,91 @@ export default function FarmerInputDashboard() {
                           label === 'Moderate Stress' ? 'bg-yellow-500' :
                           'bg-red-500'
                         }`}
-                        style={{ width: `${prob * 100}%` }}
+                        style={{ width: `${prob}%` }}
                       ></div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
+
+            {/* SHAP FEATURE IMPORTANCE - WATERFALL EXPLANATION */}
+            {prediction.explanation && prediction.explanation.feature_importance && (
+              <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  🔍 Why This Prediction? (SHAP Analysis)
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Here's what influenced the crop stress prediction:
+                </p>
+                
+                {/* Top 3 Most Important Factors */}
+                <div className="mb-6">
+                  <h4 className="text-sm font-semibold text-gray-800 mb-3">🎯 Top Factors (Most Important):</h4>
+                  <div className="space-y-3">
+                    {prediction.explanation.top_factors && prediction.explanation.top_factors.map((factor, idx) => {
+                      const isPositive = factor.shap_value > 0
+                      const barLength = Math.abs(factor.shap_value) * 100
+                      
+                      return (
+                        <div key={idx} className="space-y-1">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">
+                                {idx + 1}. {factor.friendly_name}
+                              </p>
+                              <p className="text-xs text-gray-600">
+                                {factor.farmer_friendly}
+                              </p>
+                              <p className="text-xs text-blue-600 font-mono">
+                                SHAP value: {isPositive ? '+' : ''}{factor.shap_value.toFixed(4)}
+                              </p>
+                            </div>
+                          </div>
+                          {/* Waterfall bar */}
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 bg-gray-100 rounded-full h-2 flex items-center">
+                              <div
+                                className={`h-2 rounded-full ${
+                                  isPositive ? 'bg-red-500' : 'bg-blue-500'
+                                }`}
+                                style={{ width: `${Math.min(barLength, 100)}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-xs font-bold w-12 text-right">
+                              {Math.abs(factor.shap_value).toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* All Features Detailed View */}
+                <details className="mt-4 pt-4 border-t border-gray-200">
+                  <summary className="cursor-pointer font-semibold text-sm text-gray-700 hover:text-gray-900">
+                    📋 View All {prediction.explanation.feature_importance.length} Features
+                  </summary>
+                  <div className="mt-3 space-y-2 max-h-64 overflow-y-auto">
+                    {prediction.explanation.feature_importance.map((factor, idx) => {
+                      const isPositive = factor.shap_value > 0
+                      return (
+                        <div key={idx} className="p-2 bg-gray-50 rounded text-xs">
+                          <div className="flex justify-between items-start mb-1">
+                            <span className="font-medium text-gray-700">{factor.friendly_name}</span>
+                            <span className={`font-bold ${isPositive ? 'text-red-600' : 'text-blue-600'}`}>
+                              {isPositive ? '+' : ''}{factor.shap_value.toFixed(4)}
+                            </span>
+                          </div>
+                          <p className="text-gray-600">{factor.farmer_friendly}</p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </details>
+              </div>
+            )}
           </div>
         )}
 
